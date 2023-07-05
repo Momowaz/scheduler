@@ -17,6 +17,7 @@ import Show from "components/Appointment/Show";
 import Confirm from "components/Appointment/Confirm";
 import Status from "components/Appointment/Status";
 import Error from "components/Appointment/Error";
+import Form from "components/Appointment/Form";
 
 
 
@@ -183,3 +184,20 @@ storiesOf("Button", module)
             onClose={action("onClose")}
           />
         )
+        storiesOf("Form", module)
+        .add("Create", () => (
+          <Form
+            interviewers={interviewers}
+            onSave={() => {}}
+            onCancel={() => {}}
+          />
+        ))
+        .add("Edit", () => (
+          <Form
+            name="John Doe"
+            interviewer={2}
+            interviewers={interviewers}
+            onSave={() => {}}
+            onCancel={() => {}}
+          />
+        ));
