@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 
 import { storiesOf } from "@storybook/react";
 import { action } from "@storybook/addon-actions";
@@ -10,7 +10,7 @@ import DayListItem from "../src/components/DayListItem";
 import InterviewerListItem from "components/InterviewerListItem";
 import InterviewerList from "components/InterviewerList";
 import DayList from "components/DayList.";
-import Appointment from "components/Appointment";
+import Appointment from "components/Appointment/Appointment";
 import Header from "components/Appointment/Header";
 import Empty from "components/Appointment/Empty";
 import Show from "components/Appointment/Show";
@@ -184,7 +184,24 @@ storiesOf("Button", module)
             onClose={action("onClose")}
           />
         )
-        storiesOf("Form", module)
+        .add("Appointment Empty", () => (
+          <Fragment>
+            <Appointment id={1} time="4pm" />
+            <Appointment time="5pm" />
+          </Fragment>
+        ))
+        .add("Appointment Booked", () => (
+          <Fragment>
+            <Appointment
+              id={1}
+              time="4pm"
+              interview={{ student: "Lydia Miller-Jones", interviewer }}
+            />
+            <Appointment time="5pm" />
+          </Fragment>
+        ))
+    
+    storiesOf("Form", module)
         .add("Create", () => (
           <Form
             interviewers={interviewers}
