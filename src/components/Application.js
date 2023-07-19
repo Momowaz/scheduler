@@ -47,29 +47,38 @@ import { getAppointmentsForDay, getInterview } from "helpers/selectors";
 // };
 
 // eslint-disable-next-line
-const interviewers = {
-  id: 1,
-  name: "Sylvia Palmer",
-  avatar: "https://i.imgur.com/LpaY82x.png"
-};
+// const interviewers = {
+//   id: 1,
+//   name: "Sylvia Palmer",
+//   avatar: "https://i.imgur.com/LpaY82x.png"
+// };
+
+const interviewers = [
+  {
+    id: 1,
+    name: "Sylvia Palmer",
+    avatar: "https://i.imgur.com/LpaY82x.png"
+  }
+];
+
 
 
 export default function Application(props) {
-  
+
   const setDay = (day) => {
     setState((prevState) => ({
       ...prevState,
       day: day,
     }));
   };
-  
+
   // const setDays = (days) => {
   //   setState((prevState) => ({
   //     ...prevState,
   //     days: days,
   //   }));
   // };
-  
+
 
   const [state, setState] = useState({
     day: "Monday",
@@ -80,7 +89,22 @@ export default function Application(props) {
 
   // const dailyAppointments = [];
 
-  
+  function bookInterview(id, interview) {
+    const appointment = {
+      ...state.appointments[id],
+      interview: { ...interview }
+    };
+    const appointments = {
+      ...state.appointments,
+      [id]: appointment
+    };
+
+    setState((prevState) => ({
+      ...prevState,
+      appointments
+    }));
+    console.log('bookInterview function...', id, interview);
+  }
 
   useEffect(() => {
 
@@ -89,26 +113,19 @@ export default function Application(props) {
       axios.get('/api/appointments'),
       axios.get('/api/interviewers')
     ]).then((all) => {
-      console.log('my console log to get interviewer...',all[2].data);
-     setState(prev => ({
-      ...prev,
-      days: all[0].data,
-      appointments: all[1].data,
-      interviewers: all[2].data
-     }))
+      console.log('my console log to get interviewer...', all[2].data);
+      setState(prev => ({
+        ...prev,
+        days: all[0].data,
+        appointments: all[1].data,
+        interviewers: all[2].data
+      }))
 
       console.log(all[2]);
     })
-    // axios.get('/api/days')
-    // .then(response => {
-    //   setDays(response.data);
-    // })
-    // .catch(error => {
-    //   console.log('unable to get days from api', error);
-    // });
   }, [])
   const dailyAppointments = getAppointmentsForDay(state, state.day)
-  
+
   return (
     <main className="layout">
       <section className="sidebar">
@@ -132,21 +149,23 @@ export default function Application(props) {
         />
       </section>
       <section className="schedule">
-        <InterviewerListItem 
-        interviewers={interviewers}
-        interviewer={state.interviewer}
-        setInterviewer={state.setInterviewer}
+        <InterviewerListItem
+          interviewers={interviewers}
+          interviewer={state.interviewer}
+          setInterviewer={state.setInterviewer}
         />
+
 
         {dailyAppointments.map((appointment) => {
           const interview = getInterview(state, appointment.interview)
           console.log('what is in interview:.. ', interview)
-          return <Appointment 
-          key={appointment.id} 
-          id={appointment.id}
-          time={appointment.time} 
-          interview={interview}
-           />
+          return <Appointment
+            key={appointment.id}
+            id={appointment.id}
+            time={appointment.time}
+            interview={interview}
+            bookInterview={bookInterview}
+          />
         })}
       </section>
     </main>
