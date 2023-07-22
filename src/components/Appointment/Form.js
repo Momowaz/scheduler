@@ -8,12 +8,13 @@ export default function Form(props) {
   const [interviewer, setInterviewer] = useState(props.interviewer || null);
 
   const reset = () => {
-    props.setStudent("");
-    props.setInterviewer(null);
+    setStudent("");
+    setInterviewer(null);
   }
   const cancel = () => {
     reset();
     props.onCancel();
+    props.onCancelInterview(props.id);
   }
 
   return (
@@ -30,9 +31,6 @@ export default function Form(props) {
           />
         </form>
         <InterviewerList
-          // interviewers={props.interviewers}
-          // value={props.interviewer} 
-          // onChange={props.setInterviewer}
           interviewers={props.interviewers}
           value={interviewer}
           onChange={setInterviewer}

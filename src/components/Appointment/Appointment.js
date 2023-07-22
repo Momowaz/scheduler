@@ -4,11 +4,15 @@ import Header from "./Header";
 import Show from "./Show";
 import Form from "./Form";
 import Empty from "./Empty";
+import Status from "./Status"; 
 import { useVisualMode } from "hooks/useVisualMode";
+import axios from "axios";
 
 const EMPTY = "EMPTY";
 const SHOW = "SHOW";
 const CREATE = "CREATE";
+const SAVING = "SAVING";
+const DELETING = "DELETING";
 
 
 export default function Appointment(props) {
@@ -22,12 +26,31 @@ export default function Appointment(props) {
           student: name,
           interviewer
         };
+        transition(SAVING)
         console.log('id:', props.id);
         console.log('interview', interview);
         props.bookInterview(props.id, interview);
         transition(SHOW);
       }
 
+      function deleteInterview() {
+        // Update the local state to set the interview to null
+        props.setInterview(null);
+      
+        // Make a DELETE request to the API to remove the interview from the database
+        axios.delete(`/api/appointments/${props.id}`).then((response) => {
+          // If the request is successful, transition to the EMPTY mode
+          transition(EMPTY);
+        });
+      }
+
+      function cancelInterview() {
+        transition(DELETING);
+        props.cancelInterview(props.id).then(() => {
+          transition(EMPTY);
+        });
+      }
+      
     return (
         <>
             <article className="appointment"></article>
@@ -37,9 +60,21 @@ export default function Appointment(props) {
            {mode === SHOW && (
             <Show student={props.interview.student}
             interviewer={props.interview.interviewer.name}
+            onDelete={deleteInterview}
             />
            )}
-           {mode === CREATE && <Form onSave={save} />}
+           {mode === SAVING && <Status message="Saving" />}
+           {mode === CREATE && 
+           <Form
+           student={props.student}
+           interviewer={props.interviewer}
+           interviewers={props.interviewers} // Pass the interviewers data here
+           onSave={save}
+           onCancel={cancelInterview}
+           setStudent={props.setStudent} 
+           setInterviewer={props.setInterviewer}
+           
+         />}
         </>
     )
 }

@@ -5,65 +5,26 @@ import InterviewerListItem from "./InterviewerListItem";
 import Appointment from "./Appointment/Appointment"
 import axios from "axios";
 import { getAppointmentsForDay, getInterview } from "helpers/selectors";
+import { useVisualMode } from "hooks/useVisualMode";
 
 
-// const appointments = {
-//   "1": {
+// const interviewers = [
+//   {
 //     id: 1,
-//     time: "12pm",
-//   },
-//   "2": {
-//     id: 2,
-//     time: "1pm",
-//     interview: {
-//       student: "Lydia Miller-Jones",
-//       interviewer:{
-//         id: 3,
-//         name: "Sylvia Palmer",
-//         avatar: "https://i.imgur.com/LpaY82x.png",
-//       }
-//     }
-//   },
-//   "3": {
-//     id: 3,
-//     time: "2pm",
-//   },
-//   "4": {
-//     id: 4,
-//     time: "3pm",
-//     interview: {
-//       student: "Archie Andrews",
-//       interviewer:{
-//         id: 4,
-//         name: "Cohana Roy",
-//         avatar: "https://i.imgur.com/FK8V841.jpg",
-//       }
-//     }
-//   },
-//   "5": {
-//     id: 5,
-//     time: "4pm",
+//     name: "Sylvia Palmer",
+//     avatar: "https://i.imgur.com/LpaY82x.png"
 //   }
-// };
+// ];
 
-// eslint-disable-next-line
-// const interviewers = {
-//   id: 1,
-//   name: "Sylvia Palmer",
-//   avatar: "https://i.imgur.com/LpaY82x.png"
-// };
 
-const interviewers = [
-  {
-    id: 1,
-    name: "Sylvia Palmer",
-    avatar: "https://i.imgur.com/LpaY82x.png"
-  }
-];
-
+const EMPTY = "EMPTY";
+const SHOW = "SHOW";
+const CREATE = "CREATE";
 
 
 export default function Application(props) {
+
+  const { mode, transition, back } = useVisualMode(EMPTY);
 
   const setDay = (day) => {
     setState((prevState) => ({
@@ -71,13 +32,6 @@ export default function Application(props) {
       day: day,
     }));
   };
-
-  // const setDays = (days) => {
-  //   setState((prevState) => ({
-  //     ...prevState,
-  //     days: days,
-  //   }));
-  // };
 
 
   const [state, setState] = useState({
@@ -87,45 +41,85 @@ export default function Application(props) {
     interviewers: {}
   });
 
-  // const dailyAppointments = [];
-
-  function bookInterview(id, interview) {
-    const appointment = {
-      ...state.appointments[id],
-      interview: { ...interview }
-    };
-    const appointments = {
-      ...state.appointments,
-      [id]: appointment
-    };
-
-    setState((prevState) => ({
-      ...prevState,
-      appointments
-    }));
-    console.log('bookInterview function...', id, interview);
-  }
-
   useEffect(() => {
-
     Promise.all([
       axios.get('/api/days'),
       axios.get('/api/appointments'),
       axios.get('/api/interviewers')
     ]).then((all) => {
-      console.log('my console log to get interviewer...', all[2].data);
+      console.log('Interviewers data:', all[2].data);
       setState(prev => ({
         ...prev,
         days: all[0].data,
         appointments: all[1].data,
         interviewers: all[2].data
-      }))
-
-      console.log(all[2]);
+      }));
     })
-  }, [])
-  const dailyAppointments = getAppointmentsForDay(state, state.day)
+    .catch(error => {
+      console.log('Error fetching data:', error);
+    });
+  }, []);
 
+  
+  function bookInterview(id, interview) {
+    const appointment = {
+      ...state.appointments[id],
+      interview: { ...interview }
+    };
+  
+    const appointments = {
+      ...state.appointments,
+      [id]: appointment
+    };
+  
+    // Make the PUT request to update the appointment in the database
+    axios.put(`/api/appointments/${id}`, { interview })
+      .then(() => {
+        setState(prevState => ({
+          ...prevState,
+          appointments
+        }));
+        // Transition to the SHOW mode after successful update
+        transition(SHOW);
+      })
+      .catch(error => {
+        console.log('Error updating appointment:', error);
+        // Handle any errors that occur during the PUT request
+      });
+  }
+
+  function cancelInterview(id) {
+    // Find the appointment with the given id
+    const appointment = state.appointments[id];
+  
+    // Update the appointment to set the interview data to null
+    const updatedAppointment = {
+      ...appointment,
+      interview: null,
+    };
+  
+    // Create a new appointments object with the updated appointment
+    const updatedAppointments = {
+      ...state.appointments,
+      [id]: updatedAppointment,
+    };
+  
+    // Update the state with the new appointments object
+    setState((prev) => ({
+      ...prev,
+      appointments: updatedAppointments,
+    }));
+  
+    // Make a DELETE request to the API to remove the interview from the database
+    // axios.delete(`/api/appointments/${id}`).then((response) => {
+     
+    // });
+  }
+  
+
+
+  const dailyAppointments = getAppointmentsForDay(state, state.day)
+  console.log('state ....', state);
   return (
     <main className="layout">
       <section className="sidebar">
@@ -150,7 +144,7 @@ export default function Application(props) {
       </section>
       <section className="schedule">
         <InterviewerListItem
-          interviewers={interviewers}
+          interviewers={state.interviewers}
           interviewer={state.interviewer}
           setInterviewer={state.setInterviewer}
         />
@@ -164,7 +158,9 @@ export default function Application(props) {
             id={appointment.id}
             time={appointment.time}
             interview={interview}
+            interviewers={state.interviewers}
             bookInterview={bookInterview}
+            cancelInterview={cancelInterview}
           />
         })}
       </section>
