@@ -13,13 +13,16 @@ export function getAppointmentsForDay(state, day) {
     return filteredAppointments;
 }
 
+
 export function getInterview(state, interview) {
 
     if(!interview) {
         return null;
     }
-
     const interviewer = state.interviewers[interview.interviewer];
+    if (!interviewer) {
+        return null; // Return null if interviewer data is not available
+      }
 
     return {
         student: interview.student,

@@ -1,6 +1,7 @@
 import React from "react";
-import "../components/InterviewerList.scss"
+import classNames from "classnames";
 import InterviewerListItem from "./InterviewerListItem";
+import "components/InterviewerList.scss";
 
 export default function InterviewerList(props) {
   const { interviewers, value, onChange } = props;
@@ -9,7 +10,7 @@ export default function InterviewerList(props) {
     return null; // or you can return a loading state or an error message
   }
 
-  const interviewerItems = interviewers.map((interviewer) => (
+  const interviewerItems = Object.values(interviewers).map(interviewer => (
     <InterviewerListItem
       key={interviewer.id}
       name={interviewer.name}
@@ -19,21 +20,5 @@ export default function InterviewerList(props) {
     />
   ));
 
-  return <ul className="interviewers">{interviewerItems}</ul>;
+  return <ul className="interviewers__list">{interviewerItems}</ul>;
 }
-
-
-// export default function InterviewerList(props) {
-//     const interviewerListItems = props.interviewers.map((interviewer) => (
-//       <InterviewerListItem
-//         key={interviewer.id}
-//         name={interviewer.name}
-//         avatar={interviewer.avatar}
-//         selected={interviewer.id === props.value}
-//         setInterviewer={() => props.onChange(interviewer.id)}
-//       />
-//     ));
-  
-//     return <ul className="interviewers__list">{interviewerListItems}</ul>;
-//   }
-  

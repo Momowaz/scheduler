@@ -8,15 +8,6 @@ import { getAppointmentsForDay, getInterview } from "helpers/selectors";
 import { useVisualMode } from "hooks/useVisualMode";
 
 
-// const interviewers = [
-//   {
-//     id: 1,
-//     name: "Sylvia Palmer",
-//     avatar: "https://i.imgur.com/LpaY82x.png"
-//   }
-// ];
-
-
 const EMPTY = "EMPTY";
 const SHOW = "SHOW";
 const CREATE = "CREATE";
@@ -41,6 +32,7 @@ export default function Application(props) {
     interviewers: {}
   });
 
+  console.log('appointments list...', state.interviewers)
   useEffect(() => {
     Promise.all([
       axios.get('/api/days'),
@@ -73,7 +65,7 @@ export default function Application(props) {
     };
   
     // Make the PUT request to update the appointment in the database
-    axios.put(`/api/appointments/${id}`, { interview })
+    return axios.put(`/api/appointments/${id}`, { interview })
       .then(() => {
         setState(prevState => ({
           ...prevState,
@@ -87,35 +79,22 @@ export default function Application(props) {
         // Handle any errors that occur during the PUT request
       });
   }
-
   function cancelInterview(id) {
-    // Find the appointment with the given id
-    const appointment = state.appointments[id];
-  
-    // Update the appointment to set the interview data to null
-    const updatedAppointment = {
-      ...appointment,
-      interview: null,
-    };
-  
-    // Create a new appointments object with the updated appointment
-    const updatedAppointments = {
-      ...state.appointments,
-      [id]: updatedAppointment,
-    };
-  
-    // Update the state with the new appointments object
-    setState((prev) => ({
-      ...prev,
-      appointments: updatedAppointments,
-    }));
-  
-    // Make a DELETE request to the API to remove the interview from the database
-    // axios.delete(`/api/appointments/${id}`).then((response) => {
-     
-    // });
+    return axios.delete(`/api/appointments/${id}`).then(() => {
+      const appointment = {
+        ...state.appointments[id],
+        interview: null,
+      };
+      const appointments = {
+        ...state.appointments,
+        [id]: appointment,
+      };
+      setState({
+        ...state,
+        appointments,
+      });
+    });
   }
-  
 
 
   const dailyAppointments = getAppointmentsForDay(state, state.day)
@@ -143,13 +122,6 @@ export default function Application(props) {
         />
       </section>
       <section className="schedule">
-        <InterviewerListItem
-          interviewers={state.interviewers}
-          interviewer={state.interviewer}
-          setInterviewer={state.setInterviewer}
-        />
-
-
         {dailyAppointments.map((appointment) => {
           const interview = getInterview(state, appointment.interview)
           console.log('what is in interview:.. ', interview)
