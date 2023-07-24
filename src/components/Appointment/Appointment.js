@@ -15,9 +15,10 @@ const SHOW = "SHOW";
 const CREATE = "CREATE";
 const SAVING = "SAVING";
 const DELETING = "DELETING";
-const ERROR = "ERROR";
 const CONFIRM = "CONFIRM";
-const ERROR_SAVE = "ERROR_SAVE"
+const EDIT = "EDIT";
+const ERROR_SAVE = "ERROR_SAVE";
+const ERROR_DELETE = "ERROR_DELETE";
 
 
 export default function Appointment(props) {
@@ -44,7 +45,11 @@ export default function Appointment(props) {
         transition(DELETING);
         props.cancelInterview(props.id)
           .then(() => transition(EMPTY))
-          .catch(() => transition(ERROR, true));
+          .catch(() => transition(ERROR_DELETE, true));
+      }
+
+      function edit() {
+        transition(EDIT)
       }
     
       return (
@@ -56,6 +61,7 @@ export default function Appointment(props) {
               student={props.interview.student}
               interviewer={props.interview.interviewer.name}
               onDelete={() => transition(CONFIRM)}
+              onEdit={edit}
             />
           )}
           {mode === CREATE && (
@@ -78,6 +84,15 @@ export default function Appointment(props) {
             <Error
               message="Could not save/delete the appointment."
               onClose={() => back()}
+            />
+          )}
+          {mode === EDIT && (
+            <Form
+                interviewers={props.interviewers}
+                onSave={save}
+                onCancel={back}
+                name={props.interview.student}
+                interviewer={props.interview.interviewer.id}
             />
           )}
         </article>
