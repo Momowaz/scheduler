@@ -6,8 +6,28 @@ export default function useApplicationData() {
     day: "Monday",
     days: [],
     appointments: {},
-    interviewers: {}
+    interviewers: {},
+    spots: {}
   });
+
+  const updateSpots = (day, appointments) => {
+    const selectedDay = state.days.find((d) => d.name === day);
+
+    const availableSpots = selectedDay.appointments.filter(
+      (apptId) => !appointments[apptId].interview
+    ).length;
+
+    const updatedDay = {...selectedDay, spots: availableSpots };
+
+    const updatedDays = state.days.map((d) => 
+      d.name === day ? updatedDay : d
+    );
+    
+    setState((prev) => ({
+      ...prev,
+      days: updatedDays,
+    }));
+  };
 
   const setDay = (day) => {
     setState((prevState) => ({
@@ -54,6 +74,7 @@ export default function useApplicationData() {
           ...prevState,
           appointments,
         }));
+        updateSpots(state.day, appointments);
       })
       .catch((error) => {
         console.log("Error updating appointment:", error);
@@ -78,6 +99,8 @@ export default function useApplicationData() {
           ...prev,
           appointments,
         }));
+
+        updateSpots(state.day, appointments)
       })
       .catch((error) => {
         console.log("Error deleting appointment:", error);
