@@ -12,8 +12,6 @@ export default function useApplicationData() {
 
   const updateSpots = (day, appointments) => {
     const selectedDay = state.days.find((d) => d.name === day);
-
-    console.log("check filter...", selectedDay.appointments);
     const availableSpots = selectedDay.appointments.filter(
       (apptId) => !appointments[apptId].interview
     ).length -1;
