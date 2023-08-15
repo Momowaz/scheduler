@@ -75,11 +75,6 @@ export default function useApplicationData() {
         }));
         updateSpots(state.day, appointments);
       })
-      .catch((error) => {
-        console.log("Error updating appointment:", error);
-        // Handle any errors that occur during the PUT request
-        throw error;
-      });
   };
 
   const cancelInterview = (id) => {
@@ -101,11 +96,6 @@ export default function useApplicationData() {
 
         updateSpots(state.day, appointments)
       })
-      .catch((error) => {
-        console.log("Error deleting appointment:", error);
-        // Handle any errors that occur during the DELETE request
-        throw error;
-      });
   };
 
   return { state, setDay, bookInterview, cancelInterview };
