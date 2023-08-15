@@ -16,12 +16,12 @@ export default function useApplicationData() {
       (apptId) => !appointments[apptId].interview
     ).length;
 
-    const updatedDay = {...selectedDay, spots: availableSpots };
+    const updatedDay = { ...selectedDay, spots: availableSpots };
 
-    const updatedDays = state.days.map((d) => 
+    const updatedDays = state.days.map((d) =>
       d.name === day ? updatedDay : d
     );
-    
+
     setState((prev) => ({
       ...prev,
       days: updatedDays,
@@ -49,9 +49,6 @@ export default function useApplicationData() {
           interviewers: all[2].data,
         }));
       })
-      .catch((error) => {
-        console.log("Error fetching data:", error);
-      });
   }, []);
 
   const bookInterview = (id, interview) => {

@@ -8,22 +8,22 @@ export default function Form(props) {
   const [interviewer, setInterviewer] = useState(props.interviewer || null);
 
   function validate() {
-    
+
     if (student.trim() === "") {
       setError("Student name cannot be blank");
       return;
     }
-  
+
     if (interviewer === null) {
       setError("Please select an interviewer");
       return;
     }
-  // Clear the error if both name and interviewer are valid
-    setError(""); 
-  
+    // Clear the error if both name and interviewer are valid
+    setError("");
+
     props.onSave(student, interviewer);
   }
-  
+
   const reset = () => {
     setStudent("");
     setInterviewer(null);
@@ -36,8 +36,7 @@ export default function Form(props) {
 
   const save = () => {
     validate();
-    console.log('validtate function...', props.name)
-     if (!error && student && interviewer) {
+    if (!error && student && interviewer) {
       props.onSave(student, interviewer);
     }
   };
