@@ -14,7 +14,7 @@ export default function useApplicationData() {
     const selectedDay = state.days.find((d) => d.name === day);
     const availableSpots = selectedDay.appointments.filter(
       (apptId) => !appointments[apptId].interview
-    ).length -1;
+    ).length;
 
     const updatedDay = {...selectedDay, spots: availableSpots };
 

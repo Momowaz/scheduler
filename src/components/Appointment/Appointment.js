@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React from "react";
 import "../Appointment/styles.scss"
 import Header from "./Header";
 import Show from "./Show";
@@ -8,7 +8,7 @@ import Empty from "./Empty";
 import Confirm from "./Confirm";
 import Status from "./Status"; 
 import { useVisualMode } from "hooks/useVisualMode";
-import axios from "axios";
+// import axios from "axios";
 
 const EMPTY = "EMPTY";
 const SHOW = "SHOW";
