@@ -25,6 +25,9 @@ npm run storybook
 
 ## Book an appointment
 
+Note: if you leave the textbox empty and try to save, you will be shown an error message and 
+will not be able to save until you enter your name and select an interviewer
+
 ![book appointment](https://github.com/Momowaz/scheduler/assets/43284190/24cbe3d8-6921-4946-bca8-9a45c43f9ba8)
 
 
