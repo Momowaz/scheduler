@@ -2,7 +2,7 @@ import React from "react";
 import "components/Application.scss";
 import DayList from "./DayList.";
 // import InterviewerListItem from "./InterviewerListItem";
-import Appointment from "./Appointment/Appointment"
+import Appointment from "./Appointment"
 // import axios from "axios";
 import { getAppointmentsForDay, getInterview, getInterviewersForDay } from "helpers/selectors";
 // import { useVisualMode } from "hooks/useVisualMode";

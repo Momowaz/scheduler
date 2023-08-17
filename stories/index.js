@@ -10,7 +10,7 @@ import DayListItem from "../src/components/DayListItem";
 import InterviewerListItem from "components/InterviewerListItem";
 import InterviewerList from "components/InterviewerList";
 import DayList from "components/DayList.";
-import Appointment from "components/Appointment/Appointment";
+import Appointment from "components/Appointment";
 import Header from "components/Appointment/Header";
 import Empty from "components/Appointment/Empty";
 import Show from "components/Appointment/Show";
